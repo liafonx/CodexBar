@@ -2794,3 +2794,8 @@
 "Leave blank to use the default name." = "Залиште поле порожнім, щоб використовувати назву за замовчуванням.";
 "Rewards" = "Винагороди";
 "Reward expiry" = "Термін дії винагород";
+"floating_pill_title" = "Показувати плаваючу плашку використання";
+"floating_pill_subtitle" = "Показує невелику плашку поверх усіх вікон із використанням Codex і Claude. Натисніть на неї, щоб відкрити меню. Корисно, коли менеджер рядка меню ховає значок CodexBar.";
+"floating_pill_row_tooltip" = "%1$@ %2$@: використано %3$d%%";
+"floating_pill_row_empty_tooltip" = "%1$@ %2$@: немає даних";
+"floating_pill_accessibility_label" = "Використання CodexBar";

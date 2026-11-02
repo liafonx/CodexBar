@@ -2797,3 +2797,8 @@
 "Leave blank to use the default name." = "اتركه فارغًا لاستخدام الاسم الافتراضي.";
 "Rewards" = "المكافآت";
 "Reward expiry" = "انتهاء صلاحية المكافآت";
+"floating_pill_title" = "إظهار حبة الاستخدام العائمة";
+"floating_pill_subtitle" = "تعرض حبة صغيرة فوق كل النوافذ باستخدام Codex وClaude. انقر عليها لفتح القائمة. مفيدة عندما يخفي مدير شريط القائمة أيقونة CodexBar.";
+"floating_pill_row_tooltip" = "%1$@ %2$@: %3$d%% مستخدم";
+"floating_pill_row_empty_tooltip" = "%1$@ %2$@: لا توجد بيانات";
+"floating_pill_accessibility_label" = "استخدام CodexBar";

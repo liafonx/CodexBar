@@ -2798,3 +2798,8 @@
 "Leave blank to use the default name." = "Leave blank to use the default name.";
 "Rewards" = "Rewards";
 "Reward expiry" = "Reward expiry";
+"floating_pill_title" = "Show floating usage pill";
+"floating_pill_subtitle" = "Shows a small always-on-top pill with Codex and Claude usage. Click it to open the menu. Useful when a menu bar manager hides the CodexBar icon.";
+"floating_pill_row_tooltip" = "%1$@ %2$@: %3$d%% used";
+"floating_pill_row_empty_tooltip" = "%1$@ %2$@: no data";
+"floating_pill_accessibility_label" = "CodexBar usage";

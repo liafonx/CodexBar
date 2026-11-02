@@ -2793,3 +2793,8 @@
 "Leave blank to use the default name." = "空欄にするとデフォルトの名前を使用します。";
 "Rewards" = "報酬";
 "Reward expiry" = "報酬の有効期限";
+"floating_pill_title" = "フローティング使用量ピルを表示";
+"floating_pill_subtitle" = "CodexとClaudeの使用量を示す小さなピルを常に最前面に表示します。クリックするとメニューが開きます。メニューバー管理アプリがCodexBarのアイコンを隠す場合に便利です。";
+"floating_pill_row_tooltip" = "%1$@ %2$@: %3$d%% 使用済み";
+"floating_pill_row_empty_tooltip" = "%1$@ %2$@: データなし";
+"floating_pill_accessibility_label" = "CodexBarの使用量";

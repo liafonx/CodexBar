@@ -2761,3 +2761,8 @@
 "Leave blank to use the default name." = "기본 이름을 사용하려면 비워 두세요.";
 "Rewards" = "보상";
 "Reward expiry" = "보상 만료일";
+"floating_pill_title" = "플로팅 사용량 알약 표시";
+"floating_pill_subtitle" = "Codex와 Claude 사용량을 보여 주는 작은 알약을 항상 맨 위에 표시합니다. 클릭하면 메뉴가 열립니다. 메뉴 막대 관리 앱이 CodexBar 아이콘을 숨길 때 유용합니다.";
+"floating_pill_row_tooltip" = "%1$@ %2$@: %3$d%% 사용됨";
+"floating_pill_row_empty_tooltip" = "%1$@ %2$@: 데이터 없음";
+"floating_pill_accessibility_label" = "CodexBar 사용량";

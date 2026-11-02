@@ -2794,3 +2794,8 @@
 "Leave blank to use the default name." = "Để trống để dùng tên mặc định.";
 "Rewards" = "Phần thưởng";
 "Reward expiry" = "Ngày hết hạn phần thưởng";
+"floating_pill_title" = "Hiện viên thuốc dung lượng nổi";
+"floating_pill_subtitle" = "Hiển thị một viên thuốc nhỏ luôn nằm trên cùng với mức dùng Codex và Claude. Nhấp vào để mở menu. Hữu ích khi trình quản lý thanh menu ẩn biểu tượng CodexBar.";
+"floating_pill_row_tooltip" = "%1$@ %2$@: đã dùng %3$d%%";
+"floating_pill_row_empty_tooltip" = "%1$@ %2$@: không có dữ liệu";
+"floating_pill_accessibility_label" = "Mức dùng CodexBar";

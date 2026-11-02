@@ -2795,3 +2795,8 @@
 "Leave blank to use the default name." = "เว้นว่างไว้เพื่อใช้ชื่อเริ่มต้น";
 "Rewards" = "รางวัล";
 "Reward expiry" = "วันหมดอายุของรางวัล";
+"floating_pill_title" = "แสดงแคปซูลการใช้งานแบบลอย";
+"floating_pill_subtitle" = "แสดงแคปซูลเล็ก ๆ ที่อยู่บนสุดเสมอ พร้อมการใช้งาน Codex และ Claude คลิกเพื่อเปิดเมนู มีประโยชน์เมื่อตัวจัดการแถบเมนูซ่อนไอคอน CodexBar";
+"floating_pill_row_tooltip" = "%1$@ %2$@: ใช้ไป %3$d%%";
+"floating_pill_row_empty_tooltip" = "%1$@ %2$@: ไม่มีข้อมูล";
+"floating_pill_accessibility_label" = "การใช้งาน CodexBar";

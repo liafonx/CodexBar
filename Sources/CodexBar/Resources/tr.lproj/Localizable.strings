@@ -2796,3 +2796,8 @@
 "Leave blank to use the default name." = "Varsayılan adı kullanmak için boş bırakın.";
 "Rewards" = "Ödüller";
 "Reward expiry" = "Ödüllerin son kullanma tarihi";
+"floating_pill_title" = "Yüzen kullanım hapını göster";
+"floating_pill_subtitle" = "Codex ve Claude kullanımını gösteren, her zaman üstte duran küçük bir hap gösterir. Menüyü açmak için tıklayın. Bir menü çubuğu yöneticisi CodexBar simgesini gizlediğinde işe yarar.";
+"floating_pill_row_tooltip" = "%1$@ %2$@: %3$d%% kullanıldı";
+"floating_pill_row_empty_tooltip" = "%1$@ %2$@: veri yok";
+"floating_pill_accessibility_label" = "CodexBar kullanımı";

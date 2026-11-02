@@ -583,6 +583,7 @@ extension SettingsStore {
             debugKeepCLISessionsAlive: userDefaults.object(forKey: "debugKeepCLISessionsAlive") as? Bool ?? false,
             statusChecksEnabled: notificationDefaults.statusChecksEnabled,
             stayAwakeEnabled: userDefaults.bool(forKey: "stayAwakeEnabled"),
+            floatingUsagePillEnabled: userDefaults.bool(forKey: "floatingUsagePillEnabled"),
             credentialExpiryNotificationsEnabled: userDefaults.bool(forKey: "credentialExpiryNotificationsEnabled"),
             sessionQuotaNotificationsEnabled: notificationDefaults.sessionQuotaNotificationsEnabled,
             quotaWarningNotificationsEnabled: quotaWarnings.notificationsEnabled,

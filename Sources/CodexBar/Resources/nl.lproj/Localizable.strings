@@ -2790,3 +2790,8 @@
 "Leave blank to use the default name." = "Laat dit veld leeg om de standaardnaam te gebruiken.";
 "Rewards" = "Beloningen";
 "Reward expiry" = "Vervaldatum beloningen";
+"floating_pill_title" = "Zwevende gebruikspil tonen";
+"floating_pill_subtitle" = "Toont een kleine, altijd zichtbare pil met het gebruik van Codex en Claude. Klik erop om het menu te openen. Handig als een menubalkbeheerder het CodexBar-pictogram verbergt.";
+"floating_pill_row_tooltip" = "%1$@ %2$@: %3$d%% gebruikt";
+"floating_pill_row_empty_tooltip" = "%1$@ %2$@: geen gegevens";
+"floating_pill_accessibility_label" = "CodexBar-gebruik";

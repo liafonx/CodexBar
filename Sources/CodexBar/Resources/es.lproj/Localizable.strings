@@ -2791,3 +2791,8 @@
 "Leave blank to use the default name." = "Deja este campo vacío para usar el nombre predeterminado.";
 "Rewards" = "Recompensas";
 "Reward expiry" = "Vencimiento de las recompensas";
+"floating_pill_title" = "Mostrar la píldora flotante de uso";
+"floating_pill_subtitle" = "Muestra una pequeña píldora siempre visible con el uso de Codex y Claude. Haz clic para abrir el menú. Útil cuando un gestor de la barra de menús oculta el icono de CodexBar.";
+"floating_pill_row_tooltip" = "%1$@ %2$@: %3$d%% usado";
+"floating_pill_row_empty_tooltip" = "%1$@ %2$@: sin datos";
+"floating_pill_accessibility_label" = "Uso de CodexBar";

@@ -2785,3 +2785,8 @@
 "Leave blank to use the default name." = "留空以使用默认名称。";
 "Rewards" = "奖励";
 "Reward expiry" = "奖励到期日期";
+"floating_pill_title" = "显示悬浮用量胶囊";
+"floating_pill_subtitle" = "显示一个始终置顶的小胶囊，展示 Codex 和 Claude 的用量。点按可打开菜单。菜单栏管理工具隐藏 CodexBar 图标时很有用。";
+"floating_pill_row_tooltip" = "%1$@ %2$@：已用 %3$d%%";
+"floating_pill_row_empty_tooltip" = "%1$@ %2$@：无数据";
+"floating_pill_accessibility_label" = "CodexBar 用量";

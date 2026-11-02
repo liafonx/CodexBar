@@ -39,6 +39,7 @@ struct NativeHighlightDeferredMenuRebuild {
 }
 
 @MainActor
+// swiftlint:disable:next type_body_length
 final class StatusItemController: NSObject, NSMenuDelegate, StatusItemControlling {
     // Disable SwiftUI menu cards + menu refresh work in tests to avoid swiftpm-testing-helper crashes.
     static var menuCardRenderingEnabled = !SettingsStore.isRunningTests
@@ -323,6 +324,7 @@ final class StatusItemController: NSObject, NSMenuDelegate, StatusItemControllin
     var iconPerfRefreshCycleMetrics: IconPerfRefreshCycleMetrics?
     var iconPerfUpdatePassActive = false
     var screenChangeVisibilityTask: Task<Void, Never>?
+    var floatingUsagePill: FloatingUsagePillController?
     let loginLogger = CodexBarLog.logger(LogCategories.login)
     let menuLogger = CodexBarLog.logger(LogCategories.app)
     struct BlinkState {
@@ -438,6 +440,7 @@ final class StatusItemController: NSObject, NSMenuDelegate, StatusItemControllin
         self.updateVisibility()
         self.synchronizeFrontmostProviderMonitor()
         self.updateIcons()
+        self.startFloatingUsagePill()
         self.scheduleCodexAccountMenuProjectionRevalidationIfNeeded(
             for: self.store.enabledFirstPartyProvidersForDisplay())
         self.scheduleStartupStatusItemVisibilityCheck()
@@ -712,6 +715,7 @@ final class StatusItemController: NSObject, NSMenuDelegate, StatusItemControllin
         guard !self.isReleasedForTesting else { return }
         #endif
         MainThreadActivityBreadcrumb.push("updateIcons")
+        self.refreshFloatingUsagePill()
         self.scheduleMenuBarCountdownRefreshIfNeeded()
         self.lastObservedStoreIconWorkSignature = precomputedStoreIconSignature ?? self.storeIconObservationSignature()
         self.beginIconPerfUpdatePass()

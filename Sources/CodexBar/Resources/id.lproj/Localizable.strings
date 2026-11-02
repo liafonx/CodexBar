@@ -2795,3 +2795,8 @@
 "Leave blank to use the default name." = "Biarkan kosong untuk menggunakan nama bawaan.";
 "Rewards" = "Hadiah";
 "Reward expiry" = "Kedaluwarsa hadiah";
+"floating_pill_title" = "Tampilkan pil penggunaan mengambang";
+"floating_pill_subtitle" = "Menampilkan pil kecil yang selalu di atas dengan penggunaan Codex dan Claude. Klik untuk membuka menu. Berguna saat pengelola bilah menu menyembunyikan ikon CodexBar.";
+"floating_pill_row_tooltip" = "%1$@ %2$@: %3$d%% terpakai";
+"floating_pill_row_empty_tooltip" = "%1$@ %2$@: tidak ada data";
+"floating_pill_accessibility_label" = "Penggunaan CodexBar";

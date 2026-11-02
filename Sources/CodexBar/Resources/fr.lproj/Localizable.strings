@@ -2792,3 +2792,8 @@
 "Leave blank to use the default name." = "Laissez ce champ vide pour utiliser le nom par défaut.";
 "Rewards" = "Récompenses";
 "Reward expiry" = "Expiration des récompenses";
+"floating_pill_title" = "Afficher la pastille d'utilisation flottante";
+"floating_pill_subtitle" = "Affiche une petite pastille toujours visible avec l'utilisation de Codex et Claude. Cliquez dessus pour ouvrir le menu. Utile quand un gestionnaire de barre des menus masque l'icône CodexBar.";
+"floating_pill_row_tooltip" = "%1$@ %2$@ : %3$d %% utilisé";
+"floating_pill_row_empty_tooltip" = "%1$@ %2$@ : aucune donnée";
+"floating_pill_accessibility_label" = "Utilisation de CodexBar";

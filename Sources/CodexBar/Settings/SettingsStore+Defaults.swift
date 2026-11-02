@@ -149,6 +149,11 @@ extension SettingsStore {
         set { self.setDefault(\.stayAwakeEnabled, newValue, key: "stayAwakeEnabled") }
     }
 
+    var floatingUsagePillEnabled: Bool {
+        get { self.defaultsState.floatingUsagePillEnabled }
+        set { self.setDefault(\.floatingUsagePillEnabled, newValue, key: "floatingUsagePillEnabled") }
+    }
+
     var credentialExpiryNotificationsEnabled: Bool {
         get { self.defaultsState.credentialExpiryNotificationsEnabled }
         set { self.setDefault(

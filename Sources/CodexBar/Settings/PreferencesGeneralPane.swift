@@ -133,6 +133,12 @@ struct GeneralPane: View {
                     })
 
                 Toggle(L("start_at_login_title"), isOn: self.$settings.launchAtLogin)
+
+                Toggle(isOn: self.$settings.floatingUsagePillEnabled) {
+                    SettingsRowLabel(
+                        L("floating_pill_title"),
+                        subtitle: L("floating_pill_subtitle"))
+                }
             } header: {
                 Text(L("section_system"))
             }

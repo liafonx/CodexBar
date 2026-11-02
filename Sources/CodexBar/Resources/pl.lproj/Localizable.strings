@@ -2796,3 +2796,8 @@
 "Leave blank to use the default name." = "Pozostaw puste, aby użyć domyślnej nazwy.";
 "Rewards" = "Nagrody";
 "Reward expiry" = "Wygaśnięcie nagród";
+"floating_pill_title" = "Pokaż pływającą pigułkę użycia";
+"floating_pill_subtitle" = "Pokazuje małą, zawsze widoczną pigułkę z użyciem Codex i Claude. Kliknij ją, aby otworzyć menu. Przydatne, gdy menedżer paska menu ukrywa ikonę CodexBar.";
+"floating_pill_row_tooltip" = "%1$@ %2$@: %3$d%% wykorzystano";
+"floating_pill_row_empty_tooltip" = "%1$@ %2$@: brak danych";
+"floating_pill_accessibility_label" = "Użycie CodexBar";

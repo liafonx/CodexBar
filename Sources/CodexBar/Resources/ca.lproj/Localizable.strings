@@ -2795,3 +2795,8 @@
 "Leave blank to use the default name." = "Deixa-ho en blanc per fer servir el nom per defecte.";
 "Rewards" = "Recompenses";
 "Reward expiry" = "Caducitat de les recompenses";
+"floating_pill_title" = "Mostra la píndola d'ús flotant";
+"floating_pill_subtitle" = "Mostra una petita píndola sempre visible amb l'ús de Codex i Claude. Fes-hi clic per obrir el menú. Útil quan un gestor de la barra de menús amaga la icona de CodexBar.";
+"floating_pill_row_tooltip" = "%1$@ %2$@: %3$d%% usat";
+"floating_pill_row_empty_tooltip" = "%1$@ %2$@: sense dades";
+"floating_pill_accessibility_label" = "Ús de CodexBar";

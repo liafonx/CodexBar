@@ -2794,3 +2794,8 @@
 "Leave blank to use the default name." = "Оставьте поле пустым, чтобы использовать имя по умолчанию.";
 "Rewards" = "Награды";
 "Reward expiry" = "Срок действия наград";
+"floating_pill_title" = "Показывать плавающую плашку использования";
+"floating_pill_subtitle" = "Показывает небольшую плашку поверх всех окон с использованием Codex и Claude. Нажмите на неё, чтобы открыть меню. Полезно, когда менеджер строки меню скрывает значок CodexBar.";
+"floating_pill_row_tooltip" = "%1$@ %2$@: использовано %3$d%%";
+"floating_pill_row_empty_tooltip" = "%1$@ %2$@: нет данных";
+"floating_pill_accessibility_label" = "Использование CodexBar";
