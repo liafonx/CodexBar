@@ -95,14 +95,25 @@ enum FloatingUsagePillGlass {
 /// content behind it nearly sharp. Private classes: the initializer fails when they are missing.
 final class FloatingUsagePillBackdropView: NSView {
     /// How much the backdrop hides what is behind it. The pill stays nearly sharp; the hover panel holds
-    /// text, so it blurs and dims more.
+    /// text, so it blurs and tints more. Like the menu, the tint is white in light mode and a dark grey in
+    /// dark mode, which lifts a dark window behind it instead of turning it black.
     struct Strength {
         let blurRadius: CGFloat
-        let dimming: CGFloat
+        let lightTint: NSColor
+        let darkTint: NSColor
 
-        static let pill = Strength(blurRadius: 5, dimming: 0.1)
-        static let panel = Strength(blurRadius: 10, dimming: 0.18)
+        static let pill = Strength(
+            blurRadius: 5,
+            lightTint: NSColor(white: 1, alpha: 0.35),
+            darkTint: NSColor(white: 0.22, alpha: 0.4))
+        static let panel = Strength(
+            blurRadius: 10,
+            lightTint: NSColor(white: 1, alpha: 0.55),
+            darkTint: NSColor(white: 0.2, alpha: 0.55))
     }
+
+    private let strength: Strength
+    private let tint = CALayer()
 
     static let saturation: CGFloat = 1.5
 
@@ -111,6 +122,7 @@ final class FloatingUsagePillBackdropView: NSView {
               let blur = Self.makeFilter("gaussianBlur"),
               let saturate = Self.makeFilter("colorSaturate")
         else { return nil }
+        self.strength = strength
         super.init(frame: .zero)
         self.wantsLayer = true
         guard let layer = self.layer else { return nil }
@@ -128,10 +140,9 @@ final class FloatingUsagePillBackdropView: NSView {
         backdrop.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
         layer.addSublayer(backdrop)
 
-        let dim = CALayer()
-        dim.backgroundColor = NSColor(white: 0, alpha: strength.dimming).cgColor
-        dim.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
-        layer.addSublayer(dim)
+        self.tint.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
+        layer.addSublayer(self.tint)
+        self.updateTint()
     }
 
     @available(*, unavailable)
@@ -144,6 +155,19 @@ final class FloatingUsagePillBackdropView: NSView {
         for sublayer in self.layer?.sublayers ?? [] {
             sublayer.frame = self.bounds
         }
+    }
+
+    override func viewDidChangeEffectiveAppearance() {
+        super.viewDidChangeEffectiveAppearance()
+        self.updateTint()
+    }
+
+    private func updateTint() {
+        let isDark = self.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        self.tint.backgroundColor = (isDark ? self.strength.darkTint : self.strength.lightTint).cgColor
+        CATransaction.commit()
     }
 
     private static func makeFilter(_ type: String) -> NSObject? {

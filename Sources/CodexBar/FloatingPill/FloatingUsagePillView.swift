@@ -89,6 +89,15 @@ final class FloatingUsagePillRimView: NSView {
         nil
     }
 
+    override func viewDidChangeEffectiveAppearance() {
+        super.viewDidChangeEffectiveAppearance()
+        self.needsDisplay = true
+    }
+
+    private var isDark: Bool {
+        self.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+    }
+
     /// Glass edge like the Dock and system buttons: light along the top and bottom edges, dark along the
     /// left and right edges, each strongest at its middle and fading out toward the corners. Fainter
     /// copies further in give a soft transition into the inner area instead of a hard line.
@@ -96,6 +105,18 @@ final class FloatingUsagePillRimView: NSView {
         let steps: [(inset: CGFloat, strength: CGFloat)] = [(0, 1), (0.5, 0.45), (1, 0.22), (1.5, 0.1), (2, 0.04)]
         for step in steps {
             self.drawRimLine(inset: step.inset, strength: step.strength)
+        }
+        // Light mode adds a faint dark hairline along the outer edge, so the shape stays clear on light content.
+        if !self.isDark {
+            let outlineWidth: CGFloat = 0.5
+            let offset = outlineWidth / 2
+            let outline = NSBezierPath(
+                roundedRect: self.bounds.insetBy(dx: offset, dy: offset),
+                xRadius: max(0, self.cornerRadius - offset),
+                yRadius: max(0, self.cornerRadius - offset))
+            outline.lineWidth = outlineWidth
+            NSColor(white: 0, alpha: 0.18).setStroke()
+            outline.stroke()
         }
     }
 
@@ -111,7 +132,7 @@ final class FloatingUsagePillRimView: NSView {
         guard let context = NSGraphicsContext.current?.cgContext,
               let light = NSGradient(colors: [
                   NSColor(white: 1, alpha: 0),
-                  NSColor(white: 1, alpha: 0.55 * strength),
+                  NSColor(white: 1, alpha: (self.isDark ? 0.55 : 1) * strength),
                   NSColor(white: 1, alpha: 0),
               ]),
               let dark = NSGradient(colors: [
@@ -124,7 +145,9 @@ final class FloatingUsagePillRimView: NSView {
         context.saveGState()
         context.addPath(stroked)
         context.clip()
-        if self.wrapsCorners {
+        // Light mode keeps the plain top-and-bottom edge on the panel too: on a light panel the corner-only
+        // edge is too faint, so the panel takes the bright top and bottom and the dark sides of the pill.
+        if self.wrapsCorners, self.isDark {
             // Light along the top and bottom edges. Only the outer hairline turns the corners and fades down
             // the sides; the fainter inner lines stop where the corners begin, so the edge thins there.
             if strength < 1 {
@@ -413,6 +436,21 @@ private final class FloatingUsagePillDrawingView: NSView {
         context.restoreGState()
     }
 
+    /// Softer than full label black and white: #191919 / #F1F1F1 for weekly, #666 / #9C9C9C for session.
+    private static let weeklyPercentColor = FloatingUsagePillDrawingView.percentColor(light: 0x19, dark: 0xF1)
+    private static let sessionPercentColor = FloatingUsagePillDrawingView.percentColor(light: 0x66, dark: 0x9C)
+
+    private static func percentColor(light: Int, dark: Int) -> NSColor {
+        NSColor(name: nil) { appearance in
+            let white = appearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua ? dark : light
+            return NSColor(
+                srgbRed: CGFloat(white) / 255,
+                green: CGFloat(white) / 255,
+                blue: CGFloat(white) / 255,
+                alpha: 1)
+        }
+    }
+
     /// Weekly percent in the centre, with the smaller, dimmer session percent under it.
     private func drawPercents(
         weekly: FloatingUsagePillModel.Row?,
@@ -424,12 +462,12 @@ private final class FloatingUsagePillDrawingView: NSView {
             weekly?.barFraction,
             size: layout.weeklyFontSize,
             weight: .semibold,
-            color: .labelColor)
+            color: Self.weeklyPercentColor)
         let minor = Self.percentText(
             session?.barFraction,
             size: layout.sessionFontSize,
             weight: .medium,
-            color: .secondaryLabelColor)
+            color: Self.sessionPercentColor)
         let mainSize = main.size()
         let minorSize = minor.size()
         // The two lines overlap by a point of leading, so they read as one group.
