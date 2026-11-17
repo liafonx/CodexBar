@@ -214,6 +214,53 @@ struct FloatingUsagePillModelTests {
     }
 
     @Test
+    func `scoped weekly session slot uses weekly timing and its own title`() throws {
+        var input = self.input(
+            provider: .claude,
+            session: self.window(used: 30, minutes: nil, resetsIn: 7 * 86400 / 2))
+        input.sessionTitle = "Fable only"
+        let model = FloatingUsagePillModel.make(inputs: [input], now: self.now)
+        let column = try #require(model.columns.first)
+        let row = try #require(column.rows[0])
+        #expect(row.segmentCount == 7)
+        #expect(abs(row.elapsedFraction - 0.5) < 0.0001)
+        #expect(row.tooltip.contains("Fable only"))
+        #expect(column.tooltips[1].contains("Claude"))
+    }
+
+    private func claudeSnapshot(loginMethod: String?) -> UsageSnapshot {
+        UsageSnapshot(
+            primary: nil,
+            secondary: self.window(used: 40, minutes: 10080, resetsIn: 86400),
+            extraRateWindows: [
+                NamedRateWindow(
+                    id: "claude-weekly-scoped-fable",
+                    title: "Fable only",
+                    window: self.window(used: 25, minutes: 10080, resetsIn: 86400)),
+            ],
+            updatedAt: self.now,
+            identity: ProviderIdentitySnapshot(
+                providerID: .claude,
+                accountEmail: nil,
+                accountOrganization: nil,
+                loginMethod: loginMethod))
+    }
+
+    @Test
+    func `Claude without a session limit swaps the session slot for the Fable weekly limit`() {
+        let snapshot = self.claudeSnapshot(loginMethod: "Claude Max")
+        let swapped = StatusItemController.scopedWeeklyInPlaceOfSession(
+            provider: .claude, session: nil, snapshot: snapshot)
+        #expect(swapped?.title == "Fable only")
+        #expect(StatusItemController.scopedWeeklyInPlaceOfSession(
+            provider: .claude,
+            session: self.window(used: 10, minutes: 300, resetsIn: 3600),
+            snapshot: snapshot) == nil)
+        #expect(StatusItemController.scopedWeeklyInPlaceOfSession(
+            provider: .codex, session: nil, snapshot: snapshot) == nil)
+    }
+
+    @Test
     func `hover cards sit in one row with dividers`() {
         #expect(FloatingUsagePillHoverContent.totalWidth(cardCount: 1, cardWidth: 310) == 310)
         #expect(FloatingUsagePillHoverContent.totalWidth(cardCount: 2, cardWidth: 310) == 621)

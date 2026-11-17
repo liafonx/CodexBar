@@ -16,8 +16,14 @@ enum FloatingUsagePillLayout {
     static let segmentGap: CGFloat = 1.5
     static let weeklyFontSize: CGFloat = 10.5
     static let sessionFontSize: CGFloat = 8
-    /// Angle over which a ring fill fades into the pace color.
+    /// Longest angle over which a ring fill fades into the pace color.
     static let blendLead: CGFloat = 1.2
+    /// When the fill stops short of the pace point, its color starts to turn this far before the fill end.
+    static let paceColorLeadIn: CGFloat = 0.6
+    /// When the fill stops short of the pace point, its opacity starts to drop this far before the fill end,
+    static let paceOpacityLeadIn: CGFloat = 0.25
+    /// and reaches the pace arc opacity this far past it.
+    static let paceOpacityLeadOut: CGFloat = 0.7
     /// A capsule: the ends are concentric with the rings.
     static let cornerRadius: CGFloat = height / 2
     static let hairlineWidth: CGFloat = 0.5
@@ -36,6 +42,8 @@ enum FloatingUsagePillLayout {
 enum FloatingUsagePillPalette {
     /// Opacity of the empty part of a ring, in the provider color.
     static let trackAlpha: CGFloat = 0.22
+    /// Opacity of the arc between the fill end and the pace point, when the fill stops short of it.
+    static let paceArcAlpha: CGFloat = 0.6
 
     /// Red when usage runs ahead of time, green when it runs behind, nothing on track.
     /// Mixes two colors in OKLab, which keeps lightness even and avoids the dark, muddy middle of an sRGB mix.
@@ -294,46 +302,62 @@ private final class FloatingUsagePillDrawingView: NSView {
         let filled = CGFloat(row?.barFraction ?? 0) * 2 * .pi
         let pace = CGFloat(row?.dashFraction ?? 0) * 2 * .pi
         let tone = row.flatMap { FloatingUsagePillPalette.paceColor(for: $0.tone) }
-        let blend = tone
         let track = color.withAlphaComponent(FloatingUsagePillPalette.trackAlpha)
+        let shade = tone.flatMap { Self.weeklyShade(color: color, tone: $0, filled: filled, pace: pace) }
+        // Short of the pace point, the stroke runs on to the pace point; otherwise it stops at the fill end.
+        let strokeLimit = tone != nil && filled < pace ? pace : filled
         for segment in 0..<count {
             let start = CGFloat(segment) * step + inset
             let end = CGFloat(segment + 1) * step - inset
             self.strokeArc(center: center, radius: radius, from: start, to: end, color: track)
-            let fillEnd = min(end, filled)
-            if fillEnd > start {
-                if let blend, filled > pace {
-                    // The fill turns to the pace color over a short soft seam centred on the pace point.
-                    let lead = FloatingUsagePillLayout.blendLead / 2
-                    self.strokeBlendedArc(center: center, radius: radius, from: start, to: fillEnd) { angle in
-                        FloatingUsagePillPalette.mix(color, blend, Self.ramp(angle, from: pace - lead, to: pace + lead))
-                    }
-                } else {
-                    self.strokeArc(center: center, radius: radius, from: start, to: fillEnd, color: color)
-                }
+            let strokeEnd = min(end, strokeLimit)
+            guard strokeEnd > start else { continue }
+            if let shade, strokeEnd > shade.firstChange {
+                // One stroke per day, so the fill and the pace color never overlap at a seam.
+                self.strokeBlendedArc(center: center, radius: radius, from: start, to: strokeEnd, color: shade.color)
+            } else {
+                self.strokeArc(center: center, radius: radius, from: start, to: strokeEnd, color: color)
             }
-            // Short of the pace point, a soft arc in the pace color grows out of the fill end.
-            if let blend, filled < pace, min(end, pace) > max(start, filled) {
-                self.strokeBlendedArc(
-                    center: center,
-                    radius: radius,
-                    from: max(start, filled),
-                    to: min(end, pace),
-                    alpha: 0.6)
-                { angle in
-                    // One opacity along the whole arc; only the color changes.
-                    let mix = Self.ramp(angle, from: filled, to: filled + FloatingUsagePillLayout.blendLead)
-                    return FloatingUsagePillPalette.mix(color, blend, mix)
-                }
+        }
+    }
+
+    /// Color and opacity along the weekly stroke, for a fill that is short of or past the pace point.
+    private struct WeeklyShade {
+        /// First angle where the stroke differs from the plain fill.
+        let firstChange: CGFloat
+        let color: (CGFloat) -> NSColor
+    }
+
+    private static func weeklyShade(color: NSColor, tone: NSColor, filled: CGFloat, pace: CGFloat) -> WeeklyShade? {
+        let layout = FloatingUsagePillLayout.self
+        if filled > pace {
+            // The fill turns to the pace color over a soft seam centred on the pace point.
+            let lead = layout.blendLead / 2
+            return WeeklyShade(firstChange: pace - lead) { angle in
+                FloatingUsagePillPalette.mix(color, tone, Self.ramp(angle, from: pace - lead, to: pace + lead))
             }
+        }
+        guard filled < pace else { return nil }
+        // The fill runs on into a fainter arc in the pace color that ends at the pace point. Color and opacity
+        // both start to change inside the fill, so the fill end falls in the middle of the fade, not at an edge.
+        let span = pace - filled
+        let colorStart = filled - min(layout.paceColorLeadIn, filled)
+        let colorEnd = filled + min(layout.blendLead, span)
+        let alphaStart = filled - min(layout.paceOpacityLeadIn, filled)
+        // With no fill there is nothing to fade from, so the arc starts at its own opacity.
+        let alphaEnd = filled > 0 ? filled + min(layout.paceOpacityLeadOut, span) : alphaStart
+        let alphaDrop = 1 - FloatingUsagePillPalette.paceArcAlpha
+        return WeeklyShade(firstChange: min(colorStart, alphaStart)) { angle in
+            let mixed = FloatingUsagePillPalette.mix(color, tone, Self.ramp(angle, from: colorStart, to: colorEnd))
+            return mixed.withAlphaComponent(1 - alphaDrop * Self.ramp(angle, from: alphaStart, to: alphaEnd))
         }
     }
 
     private static func ramp(_ value: CGFloat, from lower: CGFloat, to upper: CGFloat) -> CGFloat {
         guard upper > lower else { return 1 }
         let linear = min(1, max(0, (value - lower) / (upper - lower)))
-        // Smoothstep eases both ends of the fade, so it has no visible start or end.
-        return linear * linear * (3 - 2 * linear)
+        // Smootherstep: flat slope and curvature at both ends, so a fade has no visible start or end.
+        return linear * linear * linear * (linear * (6 * linear - 15) + 10)
     }
 
     /// A tick across the ring band at the pace point, with a thin dark gap around it.
@@ -355,17 +379,37 @@ private final class FloatingUsagePillDrawingView: NSView {
         context.restoreGState()
     }
 
-    /// Clips to one round-capped arc and fills it in thin wedges, so color and opacity can change along it.
+    /// Clips to one round-capped arc and fills it with a conic gradient, so color and opacity can change along it.
+    /// `color` takes a clockwise angle from 12 o'clock, clamped to `start...end`, and returns the color with its alpha.
     private func strokeBlendedArc(
         center: CGPoint,
         radius: CGFloat,
         from start: CGFloat,
         to end: CGFloat,
-        alpha: CGFloat = 1,
         color: (CGFloat) -> NSColor)
     {
         guard let context = NSGraphicsContext.current?.cgContext else { return }
         let width = FloatingUsagePillLayout.ringLineWidth
+        // The gradient turns a full circle from the point opposite the arc, so its wrap-around seam is clipped away.
+        let origin = (start + end) / 2 - .pi
+        // Stops cover the arc and its round caps, about one per half degree; the end colors fill the rest of the turn.
+        let cap = width / 2 / radius
+        let sweep = end - start + 2 * cap
+        let samples = max(2, Int((sweep / (.pi / 360)).rounded(.up)) + 1)
+        var colors = [color(start).cgColor]
+        var locations: [CGFloat] = [0]
+        for index in 0..<samples {
+            let angle = start - cap + sweep * CGFloat(index) / CGFloat(samples - 1)
+            colors.append(color(min(end, max(start, angle))).cgColor)
+            locations.append((angle - origin) / (2 * .pi))
+        }
+        colors.append(color(end).cgColor)
+        locations.append(1)
+        guard let gradient = CGGradient(
+            colorsSpace: CGColorSpace(name: CGColorSpace.sRGB),
+            colors: colors as CFArray,
+            locations: locations)
+        else { return }
         let arc = CGMutablePath()
         arc.addArc(
             center: center,
@@ -376,27 +420,9 @@ private final class FloatingUsagePillDrawingView: NSView {
         context.saveGState()
         context.addPath(arc.copy(strokingWithWidth: width, lineCap: .round, lineJoin: .round, miterLimit: 10))
         context.clip()
-        // The wedges overlap a hair to hide seams, so they are drawn opaque and the opacity is applied once.
-        context.setAlpha(alpha)
-        context.beginTransparencyLayer(auxiliaryInfo: nil)
-        // The round caps reach past both ends, so the wedges do too.
-        let cap = width / radius
-        let slice: CGFloat = 0.02
-        var angle = start - cap
-        let outer = radius + width
-        while angle < end + cap {
-            let next = angle + slice
-            context.setFillColor(color(min(end, max(start, angle + slice / 2))).cgColor)
-            context.move(to: center)
-            context.addLine(to: CGPoint(x: center.x + outer * sin(angle), y: center.y - outer * cos(angle)))
-            context.addLine(to: CGPoint(
-                x: center.x + outer * sin(next + 0.004),
-                y: center.y - outer * cos(next + 0.004)))
-            context.closePath()
-            context.fillPath()
-            angle = next
-        }
-        context.endTransparencyLayer()
+        // macOS 14 API that Swift does not import as a CGContext method. The view is flipped, so the conic angle
+        // runs clockwise on screen, like the arcs.
+        CGContextDrawConicGradient(context, gradient, center, origin - .pi / 2)
         context.restoreGState()
     }
 

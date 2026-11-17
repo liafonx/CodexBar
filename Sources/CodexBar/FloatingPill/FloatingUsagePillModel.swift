@@ -52,6 +52,9 @@ struct FloatingUsagePillModel: Equatable {
         let sessionStage: UsagePace.Stage?
         let weeklyStage: UsagePace.Stage?
         let isStale: Bool
+        /// Set when the session slot holds a model-scoped weekly window (Claude Ultra has no session limit, so the
+        /// Fable weekly limit takes its place). The title labels the row, and the row uses weekly timing.
+        var sessionTitle: String? = nil
     }
 
     static let defaultSessionMinutes = 300
@@ -62,20 +65,28 @@ struct FloatingUsagePillModel: Equatable {
     private enum RowKind {
         case session
         case weekly
+        /// A weekly-length window shown in the session slot, labeled by its own title.
+        case scopedWeekly(title: String)
 
         private static let sessionMinutes = FloatingUsagePillModel.defaultSessionMinutes
         private static let weeklyMinutes = FloatingUsagePillModel.defaultWeeklyMinutes
 
         var defaultMinutes: Int {
-            self == .session ? Self.sessionMinutes : Self.weeklyMinutes
+            if case .session = self { return Self.sessionMinutes }
+            return Self.weeklyMinutes
         }
 
         var segmentCount: Int {
-            self == .session ? 5 : 7
+            if case .session = self { return 5 }
+            return 7
         }
 
         func label(_ metadata: ProviderMetadata) -> String {
-            L(self == .session ? metadata.sessionLabel : metadata.weeklyLabel)
+            switch self {
+            case .session: L(metadata.sessionLabel)
+            case .weekly: L(metadata.weeklyLabel)
+            case let .scopedWeekly(title): title
+            }
         }
     }
 
@@ -90,9 +101,10 @@ struct FloatingUsagePillModel: Equatable {
         FloatingUsagePillModel(columns: inputs.map { input in
             let metadata = ProviderDescriptorRegistry.descriptor(for: input.provider).metadata
             let context = RowContext(metadata: metadata, showsUsed: showsUsed, now: now)
+            let sessionKind: RowKind = input.sessionTitle.map { .scopedWeekly(title: $0) } ?? .session
             let session = self.row(
                 window: input.session,
-                kind: .session,
+                kind: sessionKind,
                 tone: Tone(stage: input.sessionStage, isStale: input.isStale),
                 context: context)
             let weekly = self.row(
@@ -105,7 +117,7 @@ struct FloatingUsagePillModel: Equatable {
                 rows: [session, weekly],
                 tooltips: [
                     session?.tooltip
-                        ?? L("floating_pill_row_empty_tooltip", metadata.displayName, RowKind.session.label(metadata)),
+                        ?? L("floating_pill_row_empty_tooltip", metadata.displayName, sessionKind.label(metadata)),
                     weekly?.tooltip
                         ?? L("floating_pill_row_empty_tooltip", metadata.displayName, RowKind.weekly.label(metadata)),
                 ])

@@ -70,15 +70,32 @@ extension StatusItemController {
         let windows = snapshot.map {
             ProviderDescriptorRegistry.descriptor(for: provider).presentation.semanticWindows(snapshot: $0)
         }
-        let sessionStage = windows?.session.flatMap {
-            UsagePaceText.sessionPace(provider: provider, window: $0, now: now)?.stage
-        }
-        let weeklyStage = windows?.weekly.flatMap {
+        let weeklyPaceStage: (RateWindow) -> UsagePace.Stage? = { window in
             self.store.weeklyPace(
                 provider: provider,
-                window: $0,
+                window: window,
                 dataConfidence: snapshot?.dataConfidence ?? .unknown,
                 now: now)?.stage
+        }
+        let weeklyStage = windows?.weekly.flatMap(weeklyPaceStage)
+        let isStale = self.store.errors[provider.instanceID] != nil
+        // Without a session limit, the inner ring shows the model-scoped (Fable) weekly limit instead.
+        if let scoped = Self.scopedWeeklyInPlaceOfSession(
+            provider: provider,
+            session: windows?.session,
+            snapshot: snapshot)
+        {
+            return FloatingUsagePillModel.Input(
+                provider: provider,
+                session: scoped.window,
+                weekly: windows?.weekly,
+                sessionStage: weeklyPaceStage(scoped.window),
+                weeklyStage: weeklyStage,
+                isStale: isStale,
+                sessionTitle: scoped.title)
+        }
+        let sessionStage = windows?.session.flatMap {
+            UsagePaceText.sessionPace(provider: provider, window: $0, now: now)?.stage
         }
         return FloatingUsagePillModel.Input(
             provider: provider,
@@ -86,7 +103,16 @@ extension StatusItemController {
             weekly: windows?.weekly,
             sessionStage: sessionStage,
             weeklyStage: weeklyStage,
-            isStale: self.store.errors[provider.instanceID] != nil)
+            isStale: isStale)
+    }
+
+    nonisolated static func scopedWeeklyInPlaceOfSession(
+        provider: UsageProvider,
+        session: RateWindow?,
+        snapshot: UsageSnapshot?) -> NamedRateWindow?
+    {
+        guard provider == .claude, session == nil else { return nil }
+        return snapshot?.claudeScopedWeeklyWindow
     }
 
     private func floatingUsagePillHoverContent() -> (models: [UsageMenuCardView.Model], width: CGFloat) {
