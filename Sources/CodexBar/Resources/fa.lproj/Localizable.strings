@@ -2856,3 +2856,8 @@
 "Google Developer Program returned an unrecognized response. Update CodexBar and try again." = "Google Developer Program پاسخی ناشناخته برگرداند. CodexBar را به‌روز کنید و دوباره امتحان کنید.";
 "Google session expired or invalid." = "نشست Google منقضی شده یا نامعتبر است.";
 "No Google Developer Program session cookies found. Sign in at me.developers.google.com/benefits or paste a Cookie header." = "هیچ کوکی نشست Google Developer Program پیدا نشد. در me.developers.google.com/benefits وارد شوید یا یک سرآیند Cookie جای‌گذاری کنید.";
+"floating_pill_title" = "نمایش قرص شناور مصرف";
+"floating_pill_subtitle" = "یک قرص کوچک همیشه‌نمایان با مصرف Codex و Claude نشان می‌دهد. برای باز کردن منو روی آن کلیک کنید. وقتی مدیر نوار منو نماد CodexBar را پنهان می‌کند مفید است.";
+"floating_pill_row_tooltip" = "%1$@ %2$@: %3$d%% مصرف‌شده";
+"floating_pill_row_empty_tooltip" = "%1$@ %2$@: بدون داده";
+"floating_pill_accessibility_label" = "مصرف CodexBar";

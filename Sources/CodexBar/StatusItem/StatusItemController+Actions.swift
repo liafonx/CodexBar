@@ -626,6 +626,12 @@ extension StatusItemController: StatusItemMenuPersistentActionDelegate {
             return
         }
 
+        // A hidden status item ignores performClick, so open from the pill when it is on screen.
+        if self.isFloatingUsagePillVisible {
+            self.openMenuFromFloatingPill()
+            return
+        }
+
         if self.shouldMergeIcons {
             self.statusItem.button?.performClick(nil)
             return
@@ -719,7 +725,7 @@ extension StatusItemController: StatusItemMenuPersistentActionDelegate {
         }
     }
 
-    private func resolvedShortcutProvider() -> UsageProvider {
+    func resolvedShortcutProvider() -> UsageProvider {
         if let last = self.lastMenuProvider?.firstPartyProvider, self.isEnabled(last) {
             return last
         }

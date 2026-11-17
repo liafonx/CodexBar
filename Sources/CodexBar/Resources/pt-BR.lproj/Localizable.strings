@@ -2852,3 +2852,8 @@
 "Google Developer Program returned an unrecognized response. Update CodexBar and try again." = "O Google Developer Program retornou uma resposta desconhecida. Atualize o CodexBar e tente novamente.";
 "Google session expired or invalid." = "A sessão do Google expirou ou é inválida.";
 "No Google Developer Program session cookies found. Sign in at me.developers.google.com/benefits or paste a Cookie header." = "Nenhum cookie de sessão do Google Developer Program encontrado. Entre em me.developers.google.com/benefits ou cole um cabeçalho Cookie.";
+"floating_pill_title" = "Mostrar a pílula flutuante de uso";
+"floating_pill_subtitle" = "Mostra uma pequena pílula sempre visível com o uso do Codex e do Claude. Clique nela para abrir o menu. Útil quando um gerenciador da barra de menus oculta o ícone do CodexBar.";
+"floating_pill_row_tooltip" = "%1$@ %2$@: %3$d%% usado";
+"floating_pill_row_empty_tooltip" = "%1$@ %2$@: sem dados";
+"floating_pill_accessibility_label" = "Uso do CodexBar";

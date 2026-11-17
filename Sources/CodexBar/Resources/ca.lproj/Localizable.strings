@@ -2854,3 +2854,8 @@
 "Google Developer Program returned an unrecognized response. Update CodexBar and try again." = "Google Developer Program ha retornat una resposta desconeguda. Actualitza CodexBar i torna-ho a provar.";
 "Google session expired or invalid." = "La sessió de Google ha caducat o no és vàlida.";
 "No Google Developer Program session cookies found. Sign in at me.developers.google.com/benefits or paste a Cookie header." = "No s'han trobat galetes de sessió de Google Developer Program. Inicia sessió a me.developers.google.com/benefits o enganxa una capçalera Cookie.";
+"floating_pill_title" = "Mostra la píndola d'ús flotant";
+"floating_pill_subtitle" = "Mostra una petita píndola sempre visible amb l'ús de Codex i Claude. Fes-hi clic per obrir el menú. Útil quan un gestor de la barra de menús amaga la icona de CodexBar.";
+"floating_pill_row_tooltip" = "%1$@ %2$@: %3$d%% usat";
+"floating_pill_row_empty_tooltip" = "%1$@ %2$@: sense dades";
+"floating_pill_accessibility_label" = "Ús de CodexBar";

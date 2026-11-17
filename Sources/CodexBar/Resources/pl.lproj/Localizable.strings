@@ -2855,3 +2855,8 @@
 "Google Developer Program returned an unrecognized response. Update CodexBar and try again." = "Google Developer Program zwrócił nierozpoznaną odpowiedź. Zaktualizuj CodexBar i spróbuj ponownie.";
 "Google session expired or invalid." = "Sesja Google wygasła lub jest nieprawidłowa.";
 "No Google Developer Program session cookies found. Sign in at me.developers.google.com/benefits or paste a Cookie header." = "Nie znaleziono plików cookie sesji Google Developer Program. Zaloguj się na me.developers.google.com/benefits lub wklej nagłówek Cookie.";
+"floating_pill_title" = "Pokaż pływającą pigułkę użycia";
+"floating_pill_subtitle" = "Pokazuje małą, zawsze widoczną pigułkę z użyciem Codex i Claude. Kliknij ją, aby otworzyć menu. Przydatne, gdy menedżer paska menu ukrywa ikonę CodexBar.";
+"floating_pill_row_tooltip" = "%1$@ %2$@: %3$d%% wykorzystano";
+"floating_pill_row_empty_tooltip" = "%1$@ %2$@: brak danych";
+"floating_pill_accessibility_label" = "Użycie CodexBar";

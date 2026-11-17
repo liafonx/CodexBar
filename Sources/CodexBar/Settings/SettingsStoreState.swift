@@ -14,6 +14,7 @@ struct SettingsDefaultsState {
     var debugKeepCLISessionsAlive: Bool
     var statusChecksEnabled: Bool
     var stayAwakeEnabled: Bool
+    var floatingUsagePillEnabled: Bool
     var credentialExpiryNotificationsEnabled: Bool
     var sessionQuotaNotificationsEnabled: Bool
     var quotaWarningNotificationsEnabled: Bool

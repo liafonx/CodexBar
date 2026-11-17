@@ -2853,3 +2853,8 @@
 "Google Developer Program returned an unrecognized response. Update CodexBar and try again." = "Google Developer Program trả về phản hồi không nhận dạng được. Hãy cập nhật CodexBar rồi thử lại.";
 "Google session expired or invalid." = "Phiên Google đã hết hạn hoặc không hợp lệ.";
 "No Google Developer Program session cookies found. Sign in at me.developers.google.com/benefits or paste a Cookie header." = "Không tìm thấy cookie phiên Google Developer Program. Đăng nhập tại me.developers.google.com/benefits hoặc dán tiêu đề Cookie.";
+"floating_pill_title" = "Hiện viên thuốc dung lượng nổi";
+"floating_pill_subtitle" = "Hiển thị một viên thuốc nhỏ luôn nằm trên cùng với mức dùng Codex và Claude. Nhấp vào để mở menu. Hữu ích khi trình quản lý thanh menu ẩn biểu tượng CodexBar.";
+"floating_pill_row_tooltip" = "%1$@ %2$@: đã dùng %3$d%%";
+"floating_pill_row_empty_tooltip" = "%1$@ %2$@: không có dữ liệu";
+"floating_pill_accessibility_label" = "Mức dùng CodexBar";

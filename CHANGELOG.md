@@ -159,6 +159,8 @@
 - Menu: use tabular digits for usage and cost values to reduce movement when equal-length numbers change (#4884). Thanks @Chipagosfinest!
 - Settings: use native popup selectors while keeping imported custom choices visible (#4895). Thanks @elijahfriedman!
 
+- General: an opt-in floating usage pill shows Codex and Claude session and weekly usage in a small always-on-top window, for when a menu bar manager hides the CodexBar icon. Click it to open the menu, hover for the usage cards, and drag it anywhere.
+
 ## 0.83.0 — 2026-10-31
 
 ### Highlights

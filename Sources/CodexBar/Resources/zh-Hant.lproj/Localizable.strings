@@ -2830,3 +2830,8 @@
 "Google Developer Program returned an unrecognized response. Update CodexBar and try again." = "Google Developer Program 傳回了無法辨識的回應。請更新 CodexBar 後再試。";
 "Google session expired or invalid." = "Google 工作階段已過期或無效。";
 "No Google Developer Program session cookies found. Sign in at me.developers.google.com/benefits or paste a Cookie header." = "找不到 Google Developer Program 工作階段 Cookie。請在 me.developers.google.com/benefits 登入或貼上 Cookie 標頭。";
+"floating_pill_title" = "顯示浮動用量膠囊";
+"floating_pill_subtitle" = "顯示一個永遠置頂的小膠囊，呈現 Codex 與 Claude 的用量。按一下即可開啟選單。選單列管理工具隱藏 CodexBar 圖示時很實用。";
+"floating_pill_row_tooltip" = "%1$@ %2$@：已用 %3$d%%";
+"floating_pill_row_empty_tooltip" = "%1$@ %2$@：無資料";
+"floating_pill_accessibility_label" = "CodexBar 用量";

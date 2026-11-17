@@ -2854,3 +2854,8 @@
 "Google Developer Program returned an unrecognized response. Update CodexBar and try again." = "Google Developer Program ส่งการตอบกลับที่ไม่รู้จัก โปรดอัปเดต CodexBar แล้วลองอีกครั้ง";
 "Google session expired or invalid." = "เซสชัน Google หมดอายุหรือไม่ถูกต้อง";
 "No Google Developer Program session cookies found. Sign in at me.developers.google.com/benefits or paste a Cookie header." = "ไม่พบคุกกี้เซสชันของ Google Developer Program ลงชื่อเข้าใช้ที่ me.developers.google.com/benefits หรือวางส่วนหัว Cookie";
+"floating_pill_title" = "แสดงแคปซูลการใช้งานแบบลอย";
+"floating_pill_subtitle" = "แสดงแคปซูลเล็ก ๆ ที่อยู่บนสุดเสมอ พร้อมการใช้งาน Codex และ Claude คลิกเพื่อเปิดเมนู มีประโยชน์เมื่อตัวจัดการแถบเมนูซ่อนไอคอน CodexBar";
+"floating_pill_row_tooltip" = "%1$@ %2$@: ใช้ไป %3$d%%";
+"floating_pill_row_empty_tooltip" = "%1$@ %2$@: ไม่มีข้อมูล";
+"floating_pill_accessibility_label" = "การใช้งาน CodexBar";

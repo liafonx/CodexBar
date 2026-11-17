@@ -2852,3 +2852,8 @@
 "Google Developer Program returned an unrecognized response. Update CodexBar and try again." = "Google Developer Program から認識できない応答が返されました。CodexBar を更新して、もう一度お試しください。";
 "Google session expired or invalid." = "Googleのセッションが期限切れか無効です。";
 "No Google Developer Program session cookies found. Sign in at me.developers.google.com/benefits or paste a Cookie header." = "Google Developer ProgramのセッションCookieが見つかりません。me.developers.google.com/benefits にサインインするか、Cookieヘッダーを貼り付けてください。";
+"floating_pill_title" = "フローティング使用量ピルを表示";
+"floating_pill_subtitle" = "CodexとClaudeの使用量を示す小さなピルを常に最前面に表示します。クリックするとメニューが開きます。メニューバー管理アプリがCodexBarのアイコンを隠す場合に便利です。";
+"floating_pill_row_tooltip" = "%1$@ %2$@: %3$d%% 使用済み";
+"floating_pill_row_empty_tooltip" = "%1$@ %2$@: データなし";
+"floating_pill_accessibility_label" = "CodexBarの使用量";
