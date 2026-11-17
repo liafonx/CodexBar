@@ -54,7 +54,7 @@ struct FloatingUsagePillModel: Equatable {
         let isStale: Bool
         /// Set when the session slot holds a model-scoped weekly window (Claude Ultra has no session limit, so the
         /// Fable weekly limit takes its place). The title labels the row, and the row uses weekly timing.
-        var sessionTitle: String? = nil
+        var sessionTitle: String?
     }
 
     static let defaultSessionMinutes = 300
