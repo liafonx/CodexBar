@@ -214,6 +214,46 @@ struct FloatingUsagePillModelTests {
     }
 
     @Test
+    func `used-up window counts down to its reset in either bar mode`() throws {
+        for showsUsed in [true, false] {
+            let row = try CodexBarLocalizationOverride.$appLanguage.withValue("en") {
+                try self.firstRow(
+                    self.input(session: self.window(used: 100, minutes: 300, resetsIn: 2 * 3600 + 5 * 60)),
+                    showsUsed: showsUsed)
+            }
+            #expect(row.resetCountdown == ["2h 5m", "2h"])
+        }
+    }
+
+    @Test
+    func `window with usage left or no future reset shows no countdown`() throws {
+        let partial = try self.firstRow(self.input(session: self.window(used: 99.9, minutes: 300, resetsIn: 3600)))
+        let over = try self.firstRow(self.input(session: self.window(used: 101, minutes: 300, resetsIn: 3600)))
+        let unknown = try self.firstRow(self.input(session: self.window(used: 100, minutes: 300, resetsIn: nil)))
+        let past = try self.firstRow(self.input(session: self.window(used: 100, minutes: 300, resetsIn: -60)))
+        #expect(partial.resetCountdown == nil)
+        #expect(over.resetCountdown != nil)
+        #expect(unknown.resetCountdown == nil)
+        #expect(past.resetCountdown == nil)
+    }
+
+    @Test
+    func `countdown offers two units then the largest unit alone`() {
+        func texts(_ seconds: TimeInterval) -> [String]? {
+            CodexBarLocalizationOverride.$appLanguage.withValue("en") {
+                FloatingUsagePillModel.countdownTexts(until: self.now.addingTimeInterval(seconds), now: self.now)
+            }
+        }
+        #expect(texts(3 * 86400 + 4 * 3600 + 30) == ["3d 4h", "3d"])
+        #expect(texts(3 * 86400 + 20 * 60) == ["3d"])
+        #expect(texts(5 * 3600) == ["5h"])
+        #expect(texts(59 * 60 + 1) == ["1h"])
+        #expect(texts(42 * 60) == ["42m"])
+        #expect(texts(10) == ["1m"])
+        #expect(texts(0) == nil)
+    }
+
+    @Test
     func `scoped weekly session slot uses weekly timing and its own title`() throws {
         var input = self.input(
             provider: .claude,

@@ -35,6 +35,9 @@ struct FloatingUsagePillModel: Equatable {
         let segmentCount: Int
         let tone: Tone
         let tooltip: String
+        /// Time left to the reset, most detailed text first, when the window is used up and its reset time is known.
+        /// The pill shows the first text that fits in place of the percent.
+        let resetCountdown: [String]?
     }
 
     struct Column: Equatable {
@@ -165,6 +168,24 @@ struct FloatingUsagePillModel: Equatable {
                 "floating_pill_row_tooltip",
                 metadata.displayName,
                 kind.label(metadata),
-                Int((used * 100).rounded())))
+                Int((used * 100).rounded())),
+            resetCountdown: used >= 1 ? window.resetsAt.flatMap { self.countdownTexts(until: $0, now: now) } : nil)
+    }
+
+    /// Two units when the time has a second unit, then the largest unit alone. Nil when the reset time has passed.
+    static func countdownTexts(until resetsAt: Date, now: Date) -> [String]? {
+        let seconds = resetsAt.timeIntervalSince(now)
+        guard seconds > 0, let rounded = Int(exactly: (seconds / 60).rounded(.up)) else { return nil }
+        let totalMinutes = max(1, rounded)
+        let (days, hours, minutes) = (totalMinutes / 1440, totalMinutes / 60 % 24, totalMinutes % 60)
+        if days > 0 {
+            let day = L("%@d", "\(days)")
+            return hours > 0 ? [L("%@d %@h", "\(days)", "\(hours)"), day] : [day]
+        }
+        if hours > 0 {
+            let hour = L("%@h", "\(hours)")
+            return minutes > 0 ? [L("%@h %@m", "\(hours)", "\(minutes)"), hour] : [hour]
+        }
+        return [L("%@m", "\(minutes)")]
     }
 }

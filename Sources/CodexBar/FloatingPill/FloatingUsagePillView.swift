@@ -16,6 +16,10 @@ enum FloatingUsagePillLayout {
     static let segmentGap: CGFloat = 1.5
     static let weeklyFontSize: CGFloat = 10.5
     static let sessionFontSize: CGFloat = 8
+    /// Smallest size a reset countdown shrinks to when no unit choice fits inside the session ring.
+    static let minCountdownFontSize: CGFloat = 5
+    /// Clear space between a reset countdown and the inner edge of the session ring, so it never touches the pace tick.
+    static let countdownClearance: CGFloat = 1
     /// Longest angle over which a ring fill fades into the pace color.
     static let blendLead: CGFloat = 1.2
     /// When the fill stops short of the pace point, its color starts to turn this far before the fill end.
@@ -477,42 +481,82 @@ private final class FloatingUsagePillDrawingView: NSView {
         }
     }
 
-    /// Weekly percent in the centre, with the smaller, dimmer session percent under it.
+    private struct TextStyle {
+        let size: CGFloat
+        let weight: NSFont.Weight
+        let color: NSColor
+
+        func text(_ string: String, size: CGFloat? = nil) -> NSAttributedString {
+            NSAttributedString(string: string, attributes: [
+                .font: NSFont.monospacedDigitSystemFont(ofSize: size ?? self.size, weight: self.weight),
+                .foregroundColor: self.color,
+            ])
+        }
+    }
+
+    /// Weekly percent in the centre, with the smaller, dimmer session percent under it. A used-up window shows the
+    /// time to its reset in place of its percent.
     private func drawPercents(
         weekly: FloatingUsagePillModel.Row?,
         session: FloatingUsagePillModel.Row?,
         center: CGPoint)
     {
         let layout = FloatingUsagePillLayout.self
-        let main = Self.percentText(
-            weekly?.barFraction,
-            size: layout.weeklyFontSize,
-            weight: .semibold,
-            color: Self.weeklyPercentColor)
-        let minor = Self.percentText(
-            session?.barFraction,
-            size: layout.sessionFontSize,
-            weight: .medium,
-            color: Self.sessionPercentColor)
+        let mainStyle = TextStyle(size: layout.weeklyFontSize, weight: .semibold, color: Self.weeklyPercentColor)
+        let minorStyle = TextStyle(size: layout.sessionFontSize, weight: .medium, color: Self.sessionPercentColor)
+        let main = mainStyle.text(Self.percentString(weekly?.barFraction))
+        let minor = minorStyle.text(Self.percentString(session?.barFraction))
         let mainSize = main.size()
         let minorSize = minor.size()
         // The two lines overlap by a point of leading, so they read as one group.
         let top = center.y - (mainSize.height + minorSize.height - 1) / 2
-        main.draw(at: CGPoint(x: center.x - mainSize.width / 2, y: top))
-        minor.draw(at: CGPoint(x: center.x - minorSize.width / 2, y: top + mainSize.height - 1))
+        let lines = [
+            (text: main, size: mainSize, row: weekly, style: mainStyle, top: top),
+            (text: minor, size: minorSize, row: session, style: minorStyle, top: top + mainSize.height - 1),
+        ]
+        for line in lines {
+            if let countdown = line.row?.resetCountdown, !countdown.isEmpty {
+                let baseline = line.top + NSFont.monospacedDigitSystemFont(
+                    ofSize: line.style.size,
+                    weight: line.style.weight).ascender
+                Self.drawCountdown(countdown, style: line.style, baseline: baseline, center: center)
+            } else {
+                line.text.draw(at: CGPoint(x: center.x - line.size.width / 2, y: line.top))
+            }
+        }
     }
 
-    private static func percentText(
-        _ fraction: Double?,
-        size: CGFloat,
-        weight: NSFont.Weight,
-        color: NSColor) -> NSAttributedString
-    {
-        let string = fraction.map { "\(Int((min(1, max(0, $0)) * 100).rounded()))%" } ?? "–"
-        return NSAttributedString(string: string, attributes: [
-            .font: NSFont.monospacedDigitSystemFont(ofSize: size, weight: weight),
-            .foregroundColor: color,
-        ])
+    private static func percentString(_ fraction: Double?) -> String {
+        fraction.map { "\(Int((min(1, max(0, $0)) * 100).rounded()))%" } ?? "–"
+    }
+
+    /// Draws the first countdown text that fits inside the session ring. When none fits, the last one shrinks until it
+    /// does. The text keeps the baseline of its line and is centred on its ink.
+    private static func drawCountdown(_ texts: [String], style: TextStyle, baseline: CGFloat, center: CGPoint) {
+        let offset = baseline - center.y
+        let measure = { (string: String, size: CGFloat) -> (text: NSAttributedString, ink: CGRect, size: CGFloat) in
+            let text = style.text(string, size: size)
+            let bounds = CGSize(width: CGFloat.greatestFiniteMagnitude, height: .greatestFiniteMagnitude)
+            return (text, text.boundingRect(with: bounds, options: .usesDeviceMetrics), size)
+        }
+        var choice = texts.lazy.map { measure($0, style.size) }.first { Self.fits($0.ink, baselineOffset: offset) }
+            ?? measure(texts[texts.count - 1], style.size)
+        let minSize = FloatingUsagePillLayout.minCountdownFontSize
+        while !Self.fits(choice.ink, baselineOffset: offset), choice.size > minSize {
+            choice = measure(texts[texts.count - 1], choice.size - 0.25)
+        }
+        let ascender = NSFont.monospacedDigitSystemFont(ofSize: choice.size, weight: style.weight).ascender
+        choice.text.draw(at: CGPoint(x: center.x - choice.ink.midX, y: baseline - ascender))
+    }
+
+    /// True when ink measured from its baseline, centred on the ring centre with the baseline `baselineOffset` below
+    /// it, stays clear of the inner edge of the session ring.
+    private static func fits(_ ink: CGRect, baselineOffset: CGFloat) -> Bool {
+        let layout = FloatingUsagePillLayout.self
+        let radius = layout.ringDiameter / 2 - 2 * layout.ringLineWidth - layout.ringGap - layout.countdownClearance
+        // Ink rises from the baseline, and the view is flipped, so its top is the smaller offset.
+        let reach = max(abs(baselineOffset - ink.maxY), abs(baselineOffset - ink.minY))
+        return (ink.width / 2) * (ink.width / 2) + reach * reach <= radius * radius
     }
 }
 
